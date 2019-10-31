@@ -4,35 +4,72 @@ import ReactDOM from 'react-dom';
 import { DisplayBox } from './CommonStyle';
 import config from './config';
 
+
 const Display = props => {
-    const [r, setRed] = useState(255);
-    const [g, setGreen] = useState(255);
-    const [b, setBlue] = useState(255);
-    const [last, setLast] = useState('');
+    const [color, setColor] = useState([255, 255, 255]);
+    const [lastValue, setLastValue] = useState(null);
 
     const getLocalStorage = val => {
         return new Promise((resolve) => {
-            chrome.storage.local.get([val], (result) => resolve(result[val]));
+            chrome.storage.local.get(val, (result) => resolve(result[val]));
         });
     }
+    useEffect(() => {
+        if (!lastValue) {
+            setTimeout(() => displayData(), 100);
+            setInterval(() => displayData(), config.DISPLAY_INTERVAL);
+        }
+
+    });
 
     const displayData = () => {
         async function getJSON (val) {
-            const items = await getLocalStorage('BTC');
-            const json = items[items.length - 1];
-            return json;
+            const items = await getLocalStorage(config.COIN_NAME);
+            if (!items && !Array.isArray(items)) return [];
+            return items;
         }
-        getJSON().then(result => setLast(
-            result && result.data && result.data[0] && result.data[0].last || 'エラー'
-        ));
+        getJSON().then(items => {
+            const item = items[items.length - 1];
+            setLastValue(
+                item && item.data && item.data[0] && item.data[0].last || 'エラー'
+            );
+            changeColor(items);
+        });
     }
 
-    setTimeout(() => displayData(), 100);
-    setInterval(() => displayData(), setting.DISPLAY_INTERVAL);
+    const changeColor = items => {
+        let lastValues = [];
+        // validation
+        for (let i = 0, len = items.length; i < len; i++) {
+            const item = items[i];
+            if (item && item.data && item.data[0] && item.data[0].last != 0) {
+                lastValues.push(item.data[0].last);
+            }
+        }
+        let increaseRateSum = 0;
+        for (let i = 0, len = lastValues.length; i < len; i++) {
+            if (i == len - 1) break;
+            increaseRateSum += (lastValues[i + 1] - lastValues[i]) / lastValues[i];
+        }
+        const increaseRate = increaseRateSum / (lastValues.length - 1);
+        //console.log(increaseRate * 100 * 100 * 100);
+        let red   = increaseRate >= 0 ? 255 / (increaseRate * 100 * 20) : 0;
+
+        let blue  = increaseRate < 0 ? 255 / (-increaseRate * 100 * 20) : 0;
+
+        let green = 0;
+
+        //console.log(lastValues, red, blue, green);
+        if (red > 255) red = 255;
+        if (red < 0) red = 0;
+        if (blue > 255) blue = 255;
+        if (blue < 0) blue = 0;
+        setColor([red, green, blue]);
+    }
 
     return (
-        <DisplayBox bgColor={`rgb(${r},${g},${b})`} color='#000'>
-            <span>{last}</span>
+        <DisplayBox bgColor={`rgb(${color[0]}, ${color[1]}, ${color[2]})`} color='#000'>
+            <span>{lastValue}</span>
         </DisplayBox>
     );
 }
