@@ -52,14 +52,31 @@ const Display = props => {
             increaseRateSum += (lastValues[i + 1] - lastValues[i]) / lastValues[i];
         }
         const increaseRate = increaseRateSum / (lastValues.length - 1);
-        //console.log(increaseRate * 100 * 100 * 100);
-        let red   = increaseRate >= 0 ? 255 / (increaseRate * 100 * 20) : 0;
 
-        let blue  = increaseRate < 0 ? 255 / (-increaseRate * 100 * 20) : 0;
+        let red, green, blue, value;
+        if (increaseRate > 0) {
+           // 0.0000001 < increaseRate < 0.01;
+           // 0.0000001 * 255 * 100 < increaseRate * 255  * 100 < 0.01 * 255  * 100;
+           // 0.0000001 * 255 * 100 < increaseRate * 255  * 100 < 0.01 * 255  * 100;
+           // 0.00255 < increaseRate * 25500 <255
+           // value = increaseRate * 255 - 1.55
+           // /253.45
 
-        let green = 0;
 
-        //console.log(lastValues, red, blue, green);
+            red = 255;
+            green = 255 / (increaseRate * 25500);
+            blue = 255 / (increaseRate * 25500);
+
+        } else if (increaseRate < 0) {
+            red = 255 / (-increaseRate * 25500);
+            green = 255 / (-increaseRate * 25500);
+            blue = 255;
+        } else {
+            red = 255;
+            green = 255;
+            blue = 255;
+        }
+        console.log(lastValues, red, blue, green);
         if (red > 255) red = 255;
         if (red < 0) red = 0;
         if (blue > 255) blue = 255;

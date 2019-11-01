@@ -12,6 +12,7 @@ export const Label = styled.span`
 
 export const DisplayBox = styled.div`
     &&& {
+        font-family: arial;
         background-color: ${props => props.bgColor};
         position: fixed;
         left: 20px;
