@@ -76,7 +76,6 @@ const Display = props => {
             green = 255;
             blue = 255;
         }
-        console.log(lastValues, red, blue, green);
         if (red > 255) red = 255;
         if (red < 0) red = 0;
         if (blue > 255) blue = 255;
