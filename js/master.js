@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "babel-polyfill"; //ないとasyncでエラー
-import styled, { keyframes, css } from 'styled-components';
-import { Label, Button } from './CommonStyle';
+import styled, { css } from 'styled-components';
 import { InputExample } from './InputExample';
-
-const date = new Date();
-let mounted = false;
 
 const noScroll = event => {
     event.preventDefault();
@@ -16,9 +12,8 @@ const refs = {
     textarea: null,
 };
 
-const Master = props => {
+const Master = () => {
     const [memo, setMemo] = useState(['']);
-    const [info, setInfo] = useState(['']);
     const getLocalStorage = async val => {
         return new Promise((resolve) => {
             chrome.storage.local.get(val, (result) => resolve(result[val]));
@@ -28,12 +23,6 @@ const Master = props => {
     useEffect(() => {
         getLocalStorage('memo').then(result => setMemo(result));
     }, []);
-
-    const setLocalStorage = val => {
-        return new Promise((resolve) => {
-            chrome.storage.local.get([val], (result) => resolve(result[val]));
-        });
-    }
 
     const handleKeyDown = event => {
         if (event.key === "Tab") {
@@ -142,7 +131,7 @@ const Master = props => {
     )
 }
 const Mixin = {
-    text: props => `
+    text: () => `
         font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ','Meiryo','ＭＳ Ｐゴシック','sans-serif';
     `,
 };

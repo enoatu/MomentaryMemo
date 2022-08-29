@@ -1,9 +1,3 @@
-//(function(){
-//    chrome.browserAction.onClicked.addListener((tab) => {
-//        chrome.tabs.create({url: "option.html"});
-//    });
-//})();
-
 chrome.runtime.onInstalled.addListener(() => {
     console.log('onInstalled....');
     scheduleRequest();
@@ -27,7 +21,7 @@ function scheduleRequest() {
 async function startRequest() {
     chrome.storage.local.get(data => {
         const lines = String(data['memo']).split(/\r\n|\r|\n/);
-        return lines.map((item, index) => {
+        return lines.map((item) => {
             const re = /[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (2[0-3]|[01][0-9]):[0-5][0-9]/;
             const result = item.match(re);
             let date = null;
