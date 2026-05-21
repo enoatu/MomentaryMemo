@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "webpack",
+    "build": "rm -rf dist && mkdir -p dist/js && cp manifest.json main.html dist/ && cp -r img dist/ && cp js/background.js dist/js/ && NODE_OPTIONS=--openssl-legacy-provider webpack",
     "fix": "eslint --fix"
   },
   "dependencies": {

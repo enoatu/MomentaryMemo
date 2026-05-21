@@ -55,7 +55,6 @@ async function startRequest() {
                         contextMessage: "It's time now",
                         priority: 1
                     });
-                    alert(item);
                 }
             }
         });

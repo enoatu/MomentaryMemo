@@ -1,11 +1,12 @@
 module.exports = {
   mode: 'development',
+  // MV3 では unsafe-eval 不可。dev でも eval 系 devtool を使わない
+  devtool: 'cheap-source-map',
   entry: {
     'main': './js/main.js',
   },
-  watch: true,
   output: {
-    path: `${__dirname}/build`,
+    path: `${__dirname}/dist/build`,
     filename: '[name].js',
   },
   module: {
